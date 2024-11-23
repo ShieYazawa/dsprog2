@@ -45,7 +45,7 @@ class CalculatorApp(ft.Container):
         self.result = ft.Text(value="0", color=ft.colors.WHITE, size=20)
 
         # アプリケーションの基本的な設定
-        self.width = 350
+        self.width = 450
         self.bgcolor = ft.colors.BLACK
         self.border_radius = ft.border_radius.all(20)   # 角丸の設定
         self.padding = 20   # 内側の余白の設定
@@ -58,6 +58,7 @@ class CalculatorApp(ft.Container):
                 ft.Row(controls=[self.result], alignment="end"),    # 計算結果を右寄せで表示
                 ft.Row(
                     controls=[
+                        ActionButton(text="x²", button_clicked=self.button_clicked),
                         ExtraActionButton(
                             text="AC", button_clicked=self.button_clicked
                         ),
@@ -70,6 +71,7 @@ class CalculatorApp(ft.Container):
                 ),
                 ft.Row(
                     controls=[
+                        ActionButton(text="x³", button_clicked=self.button_clicked),
                         DigitButton(text="7", button_clicked=self.button_clicked),
                         DigitButton(text="8", button_clicked=self.button_clicked),
                         DigitButton(text="9", button_clicked=self.button_clicked),
@@ -78,6 +80,7 @@ class CalculatorApp(ft.Container):
                 ),
                 ft.Row(
                     controls=[
+                        ActionButton(text="√x", button_clicked=self.button_clicked),
                         DigitButton(text="4", button_clicked=self.button_clicked),
                         DigitButton(text="5", button_clicked=self.button_clicked),
                         DigitButton(text="6", button_clicked=self.button_clicked),
@@ -86,6 +89,7 @@ class CalculatorApp(ft.Container):
                 ),
                 ft.Row(
                     controls=[
+                        ActionButton(text="x!", button_clicked=self.button_clicked),
                         DigitButton(text="1", button_clicked=self.button_clicked),
                         DigitButton(text="2", button_clicked=self.button_clicked),
                         DigitButton(text="3", button_clicked=self.button_clicked),
@@ -94,6 +98,7 @@ class CalculatorApp(ft.Container):
                 ),
                 ft.Row(
                     controls=[
+                        ActionButton(text="¹/x", button_clicked=self.button_clicked),
                         DigitButton(
                             text="0", expand=2, button_clicked=self.button_clicked  
                         ),  # 0ボタンは幅2倍
@@ -165,6 +170,54 @@ class CalculatorApp(ft.Container):
                     self.format_number(abs(float(self.result.value)))
                 )   # abs：絶対値を取得
                     # str：文字列に変換
+
+        # "x²"が押されたとき
+        elif data in ("x²"):
+            self.result.value = self.format_number(
+                float(self.result.value) ** 2
+            )   # 現在の値を2乗する
+            self.reset()
+
+        # "x³"が押されたとき
+        if data in ("x³"):
+            self.result.value = self.format_number(
+                float(self.result.value) ** 3
+            )   # 現在の値を3乗する
+            self.reset()
+
+        # "√x"が押されたとき
+        elif data in ("√x"):
+            # 現在の値が0以下の場合はエラーを表示
+            if float(self.result.value) < 0:
+                self.result.value = "Error"
+            else:
+                self.result.value = self.format_number(
+                    float(self.result.value) ** 0.5
+                )   # 現在の値の平方根を計算
+            self.reset()
+
+        # "x!"が押されたとき
+        elif data in ("x!"):
+            # 現在の値が0以下または小数の場合はエラーを表示
+            if float(self.result.value) <= 0 or float(self.result.value) % 1 != 0:
+                self.result.value = "Error"
+            else:
+                # 階乗の計算
+                n = int(float(self.result.value))
+                factorial = 1
+                for i in range(1, n + 1):
+                    factorial *= i
+                self.result.value = self.format_number(factorial)
+            self.reset()
+
+        # "¹/x"が押されたとき
+        elif data in ("¹/x"):
+            # 現在の値が0の場合はエラーを表示
+            if float(self.result.value) == 0:
+                self.result.value = "Error"
+            else:
+                self.result.value = self.format_number(1 / float(self.result.value))
+            self.reset()
 
         self.update()   # 表示画面を更新
 
