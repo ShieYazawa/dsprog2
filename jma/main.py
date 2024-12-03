@@ -5,8 +5,8 @@ from datetime import datetime   # 日付を扱うためのモジュール
 
 def main(page: ft.Page):
     page.title = "天気予報"
-    page.window.width = 800
-    page.window.height = 600
+    page.window.width = 950
+    page.window.height = 650
     page.padding = 0
     page.bgcolor = "#F0F0F0"  # 背景色を設定
 
@@ -223,11 +223,33 @@ def main(page: ft.Page):
                     print(f"Index error for day {i}: {e}")
                     continue
 
+            # 天気カードの位置を整理
+            # 上段3枚
+            upper_row = ft.Row(
+                controls=weather_cards[:3],  # 最初の3枚
+                alignment=ft.MainAxisAlignment.CENTER,  # 横の中央揃え
+                spacing=10  # カード間の距離
+            )
+
+            # 下段4枚
+            lower_row = ft.Row(
+                controls=weather_cards[3:],  # 残りの4枚
+                alignment=ft.MainAxisAlignment.CENTER,
+                spacing=10
+            )
+
+            # 上下段を含むColumnを作成
+            weather_display = ft.Column(
+                controls=[upper_row, lower_row],
+                alignment=ft.MainAxisAlignment.CENTER,
+                spacing=10,  # 行間の距離
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER   # 縦の中央揃え
+            )
+
             # UIの更新
-            content_area.content = ft.Row(
-                controls=weather_cards,
-                scroll=ft.ScrollMode.AUTO,  # 横スクロール可能に設定
-                spacing=10  # カード間の余白を設定
+            content_area.content = ft.Container(
+                content=weather_display,
+                padding=10, # カード内の余白
             )
 
             page.update()
