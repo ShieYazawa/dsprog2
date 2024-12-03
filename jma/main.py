@@ -151,25 +151,28 @@ def main(page: ft.Page):
             weather_cards = []
 
             # 予報データから天気カードを作成
-            for i in range(len(weather_data[0]['timeSeries'][0]['timeDefines'])):   # 各地域の予報時刻の個数に対応する天気情報を取得
+            for i in range(7):   # 天気情報は7日分取得(固定)
                 try:
-                    date = weather_data[0]['timeSeries'][0]['timeDefines'][i]
-                    weather = weather_data[0]['timeSeries'][0]['areas'][0]['weatherCodes'][i]   # 天気を示すコードを取得
-                    # 気温データの取得
                     # デフォルトの気温値を設定
                     max_temp = "--"
                     min_temp = "--"
-                    # 今日の気温データを取得
+                    # 今日の日付・天気・気温データを取得
                     if i == 0:
+                        date = weather_data[0]['timeSeries'][0]['timeDefines'][i]
+                        weather = weather_data[0]['timeSeries'][0]['areas'][0]['weatherCodes'][i]   # 天気を示すコードを取得
                         temps = weather_data[0]['timeSeries'][2]['areas'][0]['temps']
                         if len(temps) >= 4: # データが4つ以上あるか確認
                             min_temp = temps[2]  # 24時の気温
                             max_temp = temps[1]  # 12時の気温
 
-                    # 明日以降の気温データを取得
-                    elif i > 0 and i < len(weather_data[1]['timeSeries'][1]['areas'][0]['tempsMax']):
-                        max_temp = weather_data[1]['timeSeries'][1]['areas'][0]['tempsMax'][i]
-                        min_temp = weather_data[1]['timeSeries'][1]['areas'][0]['tempsMin'][i]
+                    # 明日以降の日付・天気・気温データを取得
+                    elif i > 0:
+                        week_index = i - 1
+                        date = weather_data[1]['timeSeries'][0]['timeDefines'][week_index]
+                        weather = weather_data[1]['timeSeries'][0]['areas'][0]['weatherCodes'][week_index]
+                        if week_index < len(weather_data[1]['timeSeries'][1]['areas'][0]['tempsMax']):
+                            max_temp = weather_data[1]['timeSeries'][1]['areas'][0]['tempsMax'][week_index]
+                            min_temp = weather_data[1]['timeSeries'][1]['areas'][0]['tempsMin'][week_index]
 
                     # 空文字列の場合はデフォルト値を使用
                     if max_temp == "":
